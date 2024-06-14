@@ -4,11 +4,10 @@
   "description": "",
   "main": "",
   "scripts": {
-    "start": "concurrently \"npm start:dev --workspace=backend\" \"npm \""
+    "start:backend": "docker compose up -d && cd backend && npm run start:dev",
+    "start:mobile": "cd mobile && npm run start"
   },
-  "dependencies": {
-    "concurrently": "^8.2.2"
-  },
+  "dependencies": {},
   "workspaces": ["backend", "mobile"],
   "author": "KubaWysocki",
   "license": "ISC"
