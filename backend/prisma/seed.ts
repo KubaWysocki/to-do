@@ -1,11 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 
-// initialize Prisma Client
 const prisma = new PrismaClient();
 
 async function main() {
-  // create two dummy articles
-  const post1 = await prisma.task.upsert({
+  await prisma.task.upsert({
     where: { id: 1 },
     update: {},
     create: {
@@ -14,8 +12,7 @@ async function main() {
         "We are excited to share that today's Prisma ORM release adds stable support for MongoDB!",
     },
   });
-
-  const post2 = await prisma.task.upsert({
+  await prisma.task.upsert({
     where: { id: 2 },
     update: {},
     create: {
@@ -24,17 +21,110 @@ async function main() {
         'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
     },
   });
-
-  console.log({ post1, post2 });
+  await prisma.task.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      title: "What's new in Prisma? (Q1/22)",
+      description:
+        'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
+    },
+  });
+  await prisma.task.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      title: "What's new in Prisma? (Q1/22)",
+      description:
+        'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
+    },
+  });
+  await prisma.task.upsert({
+    where: { id: 5 },
+    update: {},
+    create: {
+      title: "What's new in Prisma? (Q1/22)",
+      description:
+        'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
+    },
+  });
+  await prisma.task.upsert({
+    where: { id: 6 },
+    update: {},
+    create: {
+      title: "What's new in Prisma? (Q1/22)",
+      description:
+        'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
+    },
+  });
+  await prisma.task.upsert({
+    where: { id: 7 },
+    update: {},
+    create: {
+      title: "What's new in Prisma? (Q1/22)",
+      description:
+        'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
+    },
+  });
+  await prisma.task.upsert({
+    where: { id: 8 },
+    update: {},
+    create: {
+      title: "What's new in Prisma? (Q1/22)",
+      description:
+        'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
+    },
+  });
+  await prisma.task.upsert({
+    where: { id: 9 },
+    update: {},
+    create: {
+      title: "What's new in Prisma? (Q1/22)",
+      description:
+        'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
+    },
+  });
+  await prisma.task.upsert({
+    where: { id: 10 },
+    update: {},
+    create: {
+      title: "What's new in Prisma? (Q1/22)",
+      description:
+        'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
+    },
+  });
+  await prisma.task.upsert({
+    where: { id: 11 },
+    update: {},
+    create: {
+      title: "What's new in Prisma? (Q1/22)",
+      description:
+        'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
+    },
+  });
+  await prisma.task.upsert({
+    where: { id: 12 },
+    update: {},
+    create: {
+      title: "What's new in Prisma? (Q1/22)",
+      description:
+        'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
+    },
+  });
+  await prisma.task.upsert({
+    where: { id: 13 },
+    update: {},
+    create: {
+      title: "What's new in Prisma? (Q1/22)",
+      description:
+        'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
+    },
+  });
 }
 
-// execute the main function
 main()
   .catch((e) => {
     console.error(e);
     process.exit(1);
   })
-  .finally(async () => {
-    // close Prisma Client at the end
-    await prisma.$disconnect();
-  });
+  .finally(async () => await prisma.$disconnect());

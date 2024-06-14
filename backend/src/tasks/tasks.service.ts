@@ -12,7 +12,7 @@ export class TasksService {
   }
 
   findAll() {
-    return this.prisma.task.findMany();
+    return this.prisma.task.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
   findOne(id: number) {
