@@ -1,0 +1,15 @@
+{
+  "name": "to-do",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "start": "concurrently \"npm start:dev --workspace=backend\" \"npm \""
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "workspaces": ["backend", "mobile"],
+  "author": "KubaWysocki",
+  "license": "ISC"
+}
