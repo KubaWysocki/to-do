@@ -9,9 +9,9 @@ type ApiError = {
 
 const upperCaseFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-export const Error = ({ error }: { error: ApiError | undefined }) => {
+export const Error = ({ error, reset }: { error: ApiError | undefined; reset: () => void }) => {
   return (
-    <Snackbar visible={!!error} onDismiss={() => undefined}>
+    <Snackbar visible={!!error} onDismiss={reset}>
       {typeof error?.message === 'string' ? (
         <Text style={styles.text}>{upperCaseFirstLetter(error?.message)}</Text>
       ) : (

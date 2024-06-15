@@ -7,10 +7,11 @@ import { router, useFocusEffect, useLocalSearchParams, useNavigation } from 'exp
 
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
+import { z } from 'zod';
 
-import { fetcher } from '../app/_layout';
-import { useTasksSWR } from '../app/index';
-import { Task, TaskSchema, TaskCreateInputSchema, TaskUpdateInputSchema } from '../validators';
+import { fetcher } from '../utils/fetcher';
+import { useTasksSWR } from '../utils/useTasksSWR';
+import { Task, TaskSchema, TaskCreateInputSchema, TaskUpdateInputSchema } from '../utils/zod';
 import { CenteredContent } from './CenteredContent';
 import { Error } from './Error';
 import { Input } from './Input';
@@ -25,17 +26,26 @@ const statusList: { label: string; value: Task['status'] }[] = [
 export const TaskCRUD = () => {
   const { id } = useLocalSearchParams();
   const { mutateTasks } = useTasksSWR(false);
-  const { data, error, isLoading } = useSWR<Task>(id ? ['/tasks/' + id, TaskSchema] : null, {
-    revalidateOnMount: true,
-  });
+  const { data, error, isLoading, mutate } = useSWR<Task>(
+    id ? ['/tasks/' + id, TaskSchema] : null,
+    { revalidateOnMount: true },
+  );
 
   const [task, setTask] = useState({
     title: data?.title || '',
     description: data?.description || '',
     status: data?.status || 'TO_DO',
   });
-  useEffect(() => data && setTask(data), [data]);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [edit, setEdit] = useState(!id);
+  useEffect(() => {
+    if (data) {
+      const newData: z.infer<typeof TaskUpdateInputSchema> = { ...data };
+      delete newData.id;
+      setTask(newData);
+    }
+  }, [data]);
+  useFocusEffect(useCallback(() => () => setEdit(false), []));
 
   const navigation = useNavigation();
   useEffect(() => {
@@ -44,21 +54,25 @@ export const TaskCRUD = () => {
     });
   }, [navigation, id, edit]);
 
-  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
-
-  const { trigger: createTask, error: errCreate } = useSWRMutation(
-    ['/tasks', task],
-    ([key, body]) => fetcher([key, TaskCreateInputSchema, TaskSchema], { method: 'POST', body }),
+  const {
+    trigger: createTask,
+    error: errCreate,
+    reset: resetCreate,
+  } = useSWRMutation(['/tasks', task], ([key, body]) =>
+    fetcher([key, TaskCreateInputSchema, TaskSchema], { method: 'POST', body }),
   );
-  const { trigger: updateTask, error: errUpdate } = useSWRMutation(
-    ['/tasks/' + id, task],
-    ([key, body]) => fetcher([key, TaskUpdateInputSchema, TaskSchema], { method: 'PUT', body }),
+  const {
+    trigger: updateTask,
+    error: errUpdate,
+    reset: resetUpdate,
+  } = useSWRMutation(['/tasks/' + id, task], ([key, body]) =>
+    fetcher([key, TaskUpdateInputSchema, TaskSchema], { method: 'PUT', body }),
   );
-  const { trigger: deleteTask, error: errDelete } = useSWRMutation('/tasks/' + id, (key) =>
-    fetcher([key, TaskSchema], { method: 'DELETE' }),
-  );
-
-  useFocusEffect(useCallback(() => () => setEdit(false), []));
+  const {
+    trigger: deleteTask,
+    error: errDelete,
+    reset: resetDelete,
+  } = useSWRMutation('/tasks/' + id, (key) => fetcher([key, TaskSchema], { method: 'DELETE' }));
 
   if (isLoading) {
     return <Spinner />;
@@ -71,6 +85,7 @@ export const TaskCRUD = () => {
   const handleSave = async () => {
     const promise = id ? updateTask : createTask;
     const result = await promise();
+    delete result.id;
     setTask(result);
     mutateTasks(result);
     if (id) {
@@ -140,7 +155,12 @@ export const TaskCRUD = () => {
           </View>
         )}
       </CenteredContent>
-      <Error error={error || errCreate || errUpdate || errDelete} />
+      <Error
+        error={error || errCreate || errUpdate || errDelete}
+        reset={() =>
+          resetCreate()! || resetUpdate() || resetDelete() || mutate(() => undefined, false)
+        }
+      />
     </>
   );
 };

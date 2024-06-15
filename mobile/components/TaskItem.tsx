@@ -5,11 +5,11 @@ import { Link } from 'expo-router';
 
 import useSWRMutation from 'swr/mutation';
 
-import { fetcher } from '../app/_layout';
-import { useTasksSWR } from '../app/index';
-import { Task, TaskSchema } from '../validators';
+import { fetcher } from '../utils/fetcher';
+import { useTasksSWR } from '../utils/useTasksSWR';
+import { Task, TaskSchema } from '../utils/zod';
 
-export const TaskItem = ({ task }: { task: Task; backgroundColor?: string }) => {
+export const TaskItem = ({ task }: { task: Task }) => {
   const { mutateTasks } = useTasksSWR(false);
   const { trigger: updateTask } = useSWRMutation(['/tasks/' + task.id, task], ([key, body]) =>
     fetcher([key, TaskSchema], {
